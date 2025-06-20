@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cricket Booking + IPL Info</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f0f0f0; margin:0; padding:0; }
+    .container { background: #fff; margin:50px auto; padding:20px; max-width:500px; border-radius:10px; }
+    label, select, input, button { margin-top:10px; padding:10px; border-radius:5px; border:1px solid #ccc; width:100%; }
+    button { cursor:pointer; background:#28a745; color:#fff; border:none; }
+    button:hover { background:#218838; }
+    .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6);
+      justify-content:center; align-items:center; }
+    .modal-content { background:#fff; padding:20px; border-radius:8px; max-width:600px; width:90%; max-height:80%; overflow-y:auto; }
+    .modal-header { display:flex; justify-content:space-between; align-items:center; }
+    .close-btn { font-size:1.2rem; cursor:pointer; background:none; border:none; }
+    .confirmation { display:none; margin-top:20px; padding:15px; border:2px solid #28a745; border-radius:5px; }
+    .congrats { font-size:1.2rem; font-weight:bold; color:#155724; margin-bottom:5px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Book IPL Tickets</h1>
+    <form id="bookingForm">
+      <label for="match">Select Team / Match:</label>
+      <select id="match" required>
+        <option value="">--Choose a Team--</option>
+        <option value="CSK">Chennai Super Kings</option>
+        <option value="MI">Mumbai Indians</option>
+        <option value="RCB">Royal Challengers Bangalore</option>
+        <option value="KKR">Kolkata Knight Riders</option>
+        <option value="SRH">Sunrisers Hyderabad</option>
+        <option value="PBKS">Punjab Kings</option>
+        <option value="LSG">Lucknow Super Giants</option>
+        <option value="GT">Gujarat Titans</option>
+        <option value="DC">Delhi Capitals</option>
+        <option value="RR">Rajasthan Royals</option>
+      </select>
+      <label for="tickets">Number of Tickets:</label>
+      <input type="number" id="tickets" min="1" max="10" required/>
+      <label for="name">Full Name:</label>
+      <input type="text" id="name" required/>
+      <label for="email">Email Address:</label>
+      <input type="email" id="email" required/>
+      <button type="submit">Book Now</button>
+    </form>
+    <button id="infoBtn">Match & Player Info</button>
+
+    <div id="confirmation" class="confirmation">
+      <div class="congrats">Congratulations! 🎉</div>
+      <div id="details"></div>
+    </div>
+  </div>
+
+  <div id="infoModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Team Details</h2>
+        <button id="modalClose" class="close-btn">&times;</button>
+      </div>
+      <div id="modalBody"><p>Select a team and click the button to view player info.</p></div>
+    </div>
+  </div>
+
+  <script>
+    const teams = {
+      CSK: [
+        { name: 'Ruturaj Gaikwad', role: 'Batsman' },
+        { name: 'Devon Conway', role: 'WK‑Batsman' },
+        { name: 'Shivam Dube', role: 'All‑rounder' },
+        { name: 'Ravindra Jadeja', role: 'All‑rounder' },
+        { name: 'Sam Curran', role: 'All‑rounder' },
+        { name: 'MS Dhoni', role: 'WK‑Batsman' },
+        { name: 'Ravichandran Ashwin', role: 'Bowler' },
+        { name: 'Matheesha Pathirana', role: 'Bowler' },
+        { name: 'Noor Ahmad', role: 'Bowler' },
+        { name: 'Mukesh Choudhary', role: 'Bowler' },
+        { name: 'Nathan Ellis', role: 'Bowler' }
+      ],
+      MI: [ /* ...similar player lists for the remaining teams... */ ],
+      RCB: [ /* RCB players */ ],
+      KKR: [ /* KKR players */ ],
+      SRH: [ /* SRH players */ ],
+      PBKS: [ /* PBKS players */ ],
+      LSG: [ /* LSG players */ ],
+      GT: [ /* GT players */ ],
+      DC: [ /* DC players */ ],
+      RR: [ /* RR players */ ]
+    };
+
+    document.getElementById('infoBtn').addEventListener('click', () => {
+      const teamKey = document.getElementById('match').value;
+      const modal = document.getElementById('infoModal');
+      const body = document.getElementById('modalBody');
+      if (!teamKey) {
+        alert('Select a team first');
+        return;
+      }
+      const players = teams[teamKey];
+      body.innerHTML = '<ul>' + players.map(p => `<li><strong>${p.name}</strong> – ${p.role}</li>`).join('') + '</ul>';
+      modal.style.display = 'flex';
+    });
+
+    document.getElementById('modalClose').addEventListener('click', () => {
+      document.getElementById('infoModal').style.display = 'none';
+    });
+    window.addEventListener('click', e => {
+      if (e.target.id === 'infoModal') e.target.style.display = 'none';
+    });
+
+    document.getElementById('bookingForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const teamName = document.getElementById('match').selectedOptions[0].text;
+      const tickets = document.getElementById('tickets').value;
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+
+      document.getElementById('details').innerHTML = `
+        You’ve successfully booked <strong>${tickets}</strong> ticket(s) for <strong>${teamName}</strong>.<br>
+        Confirmation sent to: <strong>${email}</strong><br>
+        Thanks for booking, <strong>${name}</strong>!
+      `;
+      document.getElementById('confirmation').style.display = 'block';
+      e.target.reset();
+    });
+  </script>
+</body>
+</html>
